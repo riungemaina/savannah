@@ -3,7 +3,7 @@ import ApiCalendar from "react-google-calendar-api";
 import styled from "styled-components";
 
 const Auth = () => {
-  const [login, setLogin] = useState(false);
+  const [login, setLogin] = useState();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -24,21 +24,26 @@ const Auth = () => {
     setLogin(ApiCalendar.sign);
   }
 
-  const SignInBtn = styled.button`
-    visibility: ${(props) => (props.bg = true ? "hidden" : "visible")};
-  `;
-  const SignOutBtn = styled.button`
-    visibility: ${(props) => (props.bg = false ? "hidden" : "visible")};
-  `;
+  function LoginStatus(props) {
+    const isLoggedIn = props.isLoggedIn;
+    if (isLoggedIn) {
+      return <SignOutBtn onClick={signOut}>Sign Out</SignOutBtn>;
+    }
+    return <SignInBtn onClick={signIn}>Sign In</SignInBtn>;
+  }
+
+  const SignInBtn = styled.button``;
+
+  const SignOutBtn = styled.button``;
+
+  function consoleLog() {
+    console.log(ApiCalendar.listUpcomingEvents);
+  }
 
   return (
     <>
-      <SignInBtn st={login} onClick={signIn}>
-        sign-in
-      </SignInBtn>
-      <SignOutBtn st={login} onClick={signOut}>
-        sign-out
-      </SignOutBtn>
+      <LoginStatus isLoggedIn={login} />
+      <button onClick={consoleLog}>hey</button>
     </>
   );
 };
