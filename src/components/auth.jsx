@@ -1,51 +1,27 @@
-import React, { useState, useEffect } from "react";
-import ApiCalendar from "react-google-calendar-api";
+import React from "react";
+import { useApi } from "./context";
 import styled from "styled-components";
 
-const Auth = () => {
-  const [login, setLogin] = useState();
+const Container = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100vh;
+  transform: translateY(-2%);
+`;
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      isSignedIn();
-    }, 2000);
-    return () => clearInterval(interval);
-  });
-
-  function signIn() {
-    ApiCalendar.handleAuthClick();
-  }
-
-  function signOut() {
-    ApiCalendar.handleSignoutClick();
-  }
-
-  function isSignedIn() {
-    setLogin(ApiCalendar.sign);
-  }
-
-  function LoginStatus(props) {
-    const isLoggedIn = props.isLoggedIn;
-    if (isLoggedIn) {
-      return <SignOutBtn onClick={signOut}>Sign Out</SignOutBtn>;
-    }
-    return <SignInBtn onClick={signIn}>Sign In</SignInBtn>;
-  }
-
-  const SignInBtn = styled.button``;
-
-  const SignOutBtn = styled.button``;
-
-  function consoleLog() {
-    console.log(ApiCalendar.listUpcomingEvents);
-  }
+const LoginScreen = () => {
+  const handleLogin = useApi().signIn;
+  const handleIsIn = useApi().isSignedInState;
 
   return (
-    <>
-      <LoginStatus isLoggedIn={login} />
-      <button onClick={consoleLog}>hey</button>
-    </>
+    <Container>
+      <h1>Calendar Web Client</h1>
+      <button onClick={handleLogin}>Login</button>
+      <button onClick={handleIsIn}>Login</button>
+    </Container>
   );
 };
 
-export default Auth;
+export default LoginScreen;
