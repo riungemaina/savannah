@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import urls from "./urls";
+import { urls } from "./utilities";
 // import { cloneDeep } from "lodash";
 
 const ApiContext = React.createContext();
@@ -15,7 +15,6 @@ export function useApiUpdate() {
 
 export function ApiProvider({ children }) {
   // Application States
-  // const [gapiState, setGapiState] = useState(null);
   const [authState, setAuthState] = useState(null);
   const [isSignedInState, setIsSignedInState] = useState(false);
   // const [user, setUser] = useState(null);
@@ -35,23 +34,15 @@ export function ApiProvider({ children }) {
       auth.isSignedIn.listen((isSignedIn) => updateSignInStatus(isSignedIn));
       updateSignInStatus(auth.isSignedIn.get());
 
-      setAuthState(() => {
-        return { auth };
-      });
+      setAuthState(auth);
     } catch (e) {
       throw new Error(`Cannot connect with google calendar API. ${e}`);
     }
   };
 
   const updateSignInStatus = (isSignedIn) => {
-    setIsSignedInState(() => {
-      return { isSignedIn };
-    });
+    setIsSignedInState(isSignedIn);
   };
-
-  // const isSignedIn = () => {
-  //   return authState && authState.isSignedIn.get();
-  // };
 
   const signIn = async () => {
     await authState.signIn();
@@ -86,7 +77,7 @@ export function ApiProvider({ children }) {
   };
 
   const makeRequest = async (url) => {
-    const [tokenType, token] = await getToken;
+    const [tokenType, token] = await getToken();
     const response = await fetch(url, {
       headers: {
         Authorization: `${tokenType} ${token}`,
@@ -101,17 +92,17 @@ export function ApiProvider({ children }) {
   };
 
   const getAuthInstance = async () => {
-    return await window.gapi.auth2.getAuthInstance;
+    return await window.gapi.auth2.getAuthInstance();
   };
 
   const getCurrentUser = async () => {
-    const authInstance = await getAuthInstance;
-    return authInstance.currentUser.get();
+    const authInstance = await getAuthInstance();
+    return authInstance.currentUser;
   };
 
   const getToken = async () => {
-    const user = await getCurrentUser;
-    const { token_type, access_token } = user.wc;
+    const user = await getCurrentUser();
+    const { token_type, access_token } = user.le.wc;
     return [token_type, access_token];
   };
 
@@ -123,6 +114,7 @@ export function ApiProvider({ children }) {
         isSignedInState,
         getCalendarsList,
         getEvents,
+        makeRequest,
       }}
     >
       {/* <ApiUpdateContext> */} {children} {/* </ApiUpdateContext> */}{" "}
