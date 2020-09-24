@@ -2,6 +2,7 @@ import React from "react";
 import Auth from "./components/auth.jsx";
 import { useApi } from "./components/context";
 import LoadingCalender from "./components/loadingCalender";
+import Nav from "./components/nav";
 
 function App() {
   const isSignedIn = useApi().isSignedInState;
@@ -9,18 +10,25 @@ function App() {
 
   function ShowPage() {
     if (isSignedIn) {
-      switch (pageView) {
-        case "Loading":
-          return <LoadingCalender />;
-        case "ShowCalender":
-          return <button>Login</button>;
-        case "EditCalender":
-          return <button>Login</button>;
-        default:
-          return <p>Error page</p>;
-      }
+      return (
+        <>
+          <Nav />
+          <ShowView />
+        </>
+      );
     }
     return <Auth />;
+  }
+
+  function ShowView() {
+    switch (pageView) {
+      case "ShowCalender":
+        return <button>Login</button>;
+      case "EditCalender":
+        return <button>Login</button>;
+      default:
+        return <LoadingCalender />;
+    }
   }
 
   return (
