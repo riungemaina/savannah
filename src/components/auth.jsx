@@ -3,6 +3,7 @@ import { useApi } from "./context";
 import styled from "styled-components";
 import { styles } from "./utilities";
 import { Google } from "@styled-icons/boxicons-logos/Google";
+import bgImg from "./Static/background-01.png"
 
 export default function LoginScreen() {
   const handleLogin = useApi().signIn;
@@ -23,6 +24,7 @@ export default function LoginScreen() {
 
 // Styled Components Styles
 const Container = styled.div`
+  background-image: url(${bgImg});
   display: flex;
   justify-content: center;
   align-items: center;
