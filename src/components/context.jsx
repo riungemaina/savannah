@@ -14,7 +14,7 @@ export function useApiUpdate() {
 
 export function ApiProvider({ children }) {
   // Application States
-  const [authState, setAuthState] = useState(null);
+  const [calenderId, setCalenderId] = useState(null);
   const [isSignedInState, setIsSignedInState] = useState(false);
   const [pageViewState, setPageViewState] = useState(null);
 
@@ -24,7 +24,7 @@ export function ApiProvider({ children }) {
 
   const init = async () => {
     try {
-      const auth = window.gapi.client.init({
+      window.gapi.client.init({
         apiKey: "AIzaSyA5oVlePqwpNPmxYVSgp8vrH3LeiTGiJMc",
         clientId:
           "289048714237-ruictr0hr3ajo3qgpe3tlugcpajak8i7.apps.googleusercontent.com",
@@ -38,7 +38,6 @@ export function ApiProvider({ children }) {
         .isSignedIn.listen((isSignedIn) => updateSignInStatus(isSignedIn));
 
       updateSignInStatus(window.gapi.auth2.getAuthInstance().isSignedIn.get());
-      setAuthState(auth);
     } catch (e) {
       throw new Error(`Cannot connect with google calendar API. ${e}`);
     }
@@ -53,8 +52,11 @@ export function ApiProvider({ children }) {
     if (SchoolCalender == null) {
       createCalender();
     } else {
-      console.log(SchoolCalender);
-      setPageViewState("ShowCalender");
+      setCalenderId(SchoolCalender.id);
+      if (calenderId !== null && window.gapi.client.calendar.events !== null) {
+        console.log(getEvents());
+        setPageViewState("ShowCalender");
+      }
     }
   };
 
@@ -90,19 +92,25 @@ export function ApiProvider({ children }) {
     return result;
   };
 
-  const getEvents = async (calendarId, dateMin, dateMax) => {
-    const url = new URL(
-      urls.google.getEvents.replace("#{calendarId}", calendarId)
+  const getEvents = async () => {
+    const today = new Date();
+    const sevenDaysFromNow = new Date(
+      today.getTime() + 7 * 24 * 60 * 60 * 1000
     );
-    url.search = new URLSearchParams({
-      timeMin: dateMin,
-      timeMax: dateMax,
+    const events = await window.gapi.client.calendar.events.list({
+      calendarId: calenderId,
+      timeMin: today.toISOString(),
+      timeMax: sevenDaysFromNow.toISOString(),
+      showDeleted: false,
+      singleEvents: true,
+      orderBy: "startTime",
     });
-    const result = await makeRequest(url);
-    if (!result) {
-      return [];
+    const items = events.result.items;
+    console.log(events.result.items);
+    if (!events.result.items) {
+      return "no events";
     }
-    return result;
+    return items;
   };
 
   const makeRequest = async (url) => {
