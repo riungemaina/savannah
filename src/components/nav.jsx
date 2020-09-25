@@ -10,14 +10,27 @@ export default function LoadingCalender() {
   return (
     <>
       <Wrapper>
+        <Title>School Timetable - ACK St Peters Academy</Title>
         <Button onClick={handleLogout}>
           Logout
           <Logout size="30" />
-        </Button>  
+        </Button>
       </Wrapper>
     </>
   );
 }
+const Title = styled.h1`
+  ${styles.fonts.bodyFont};
+  font-size: 1.5em;
+  padding: 0 0 0 5%;
+  color: #ffe;
+  letter-spacing: 2px;
+  font-weight: 500;
+
+  ${styles.deviceSize.mobile} {
+    display: none;
+  }
+`;
 
 const Button = styled.button`
   ${styles.fonts.bodyFont};
