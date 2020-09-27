@@ -2,19 +2,14 @@ import React, { useContext, useState } from "react";
 import { urls } from "./utilities";
 
 const ApiContext = React.createContext();
-const ApiUpdateContext = React.createContext();
 
 export function useApi() {
   return useContext(ApiContext);
 }
 
-export function useApiUpdate() {
-  return useContext(ApiUpdateContext);
-}
-
 export function ApiProvider({ children }) {
   // Application States
-  const [calenderId, setCalenderId] = useState(null);
+  const [calenderId, setCalenderId] = useState("primary");
   const [isSignedInState, setIsSignedInState] = useState(false);
   const [pageViewState, setPageViewState] = useState(null);
 
@@ -53,11 +48,15 @@ export function ApiProvider({ children }) {
       createCalender();
     } else {
       setCalenderId(SchoolCalender.id);
-      if (calenderId !== null && window.gapi.client.calendar.events !== null) {
-        console.log(getEvents());
-        setPageViewState("ShowCalender");
+      if (
+        calenderId !== null &&
+        window.gapi.client.calendar.events !== null &&
+        pageViewState === null
+      ) {
+        setPageViewState("Create New Lesson");
       }
     }
+    return SchoolCalender.id;
   };
 
   const createCalender = async () => {
@@ -82,6 +81,8 @@ export function ApiProvider({ children }) {
   const logOut = async () => {
     await window.gapi.auth2.getAuthInstance().signOut();
     updateSignInStatus(window.gapi.auth2.getAuthInstance().isSignedIn.get());
+    setCalenderId(null);
+    setPageViewState(null);
   };
 
   const getCalendarsList = async () => {
@@ -106,7 +107,6 @@ export function ApiProvider({ children }) {
       orderBy: "startTime",
     });
     const items = events.result.items;
-    console.log(events.result.items);
     if (!events.result.items) {
       return "no events";
     }
@@ -134,20 +134,26 @@ export function ApiProvider({ children }) {
     return [token_type, access_token];
   };
 
+  const togglePage = () => {
+    if (pageViewState === "Show Timetable") {
+      setPageViewState("Create New Lesson");
+    } else setPageViewState("Show Timetable");
+  };
+
   return (
     <ApiContext.Provider
       value={{
         logOut,
         signIn,
         isSignedInState,
-        getCalendarsList,
         getEvents,
-        makeRequest,
         pageViewState,
         loadingCalender,
+        calenderId,
+        togglePage,
       }}
     >
-      {/* <ApiUpdateContext> */} {children} {/* </ApiUpdateContext> */}{" "}
+      {children}
     </ApiContext.Provider>
   );
 }
