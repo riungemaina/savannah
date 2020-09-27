@@ -138,7 +138,7 @@ The function takes in time `(2015-05-28T09:00:00-07:00)` as its arguement, evalu
     'timeZone': 'America/Los_Angeles'
   },
   ```
-  as the input so we need a way to convert Monday to the next occuring Monday then set the event to recur weekly
+  as the input so we need a way to convert `Monday` to the next occuring Monday then set the event to recur weekly
   
  ##### The solution
  
@@ -172,4 +172,4 @@ The function takes in time `(2015-05-28T09:00:00-07:00)` as its arguement, evalu
     : 1;
 }
   ```
-The function takes in day say `Monday` calls the `getDayOfWeek` function which returns the weekday as a number then minus that from todays date then evaluate that to find the next occuring Monday, then get its year, month and date in that format which we'll then append to the time the user entered for the class. **ProTip** you need to add one to the month value since Javascript starts counting from zero, meaning `Jan = 0, Feb = 1... Dec = 11`
+The function takes in day say `Monday` calls the `getDayOfWeek` function which returns the weekday as a number then minus that from todays date then evaluate that to find the next occuring Monday, then get its `year, month and date` in that format which we'll then append to the time the user entered for the class. **ProTip** you need to add one to the month value since Javascript starts counting from zero, meaning `Jan = 0, Feb = 1... Dec = 11`
