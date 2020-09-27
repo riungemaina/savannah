@@ -7,3 +7,5 @@
 ## edit & validate calender
 
 ## get the logout function to revert page state to null
+
+## delete api keys from api googleconfig.json
