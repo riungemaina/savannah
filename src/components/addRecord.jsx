@@ -1,21 +1,100 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { styles } from "./utilities";
+import { useApi } from "./context";
 
 export default function AddRecord() {
   const [grade, setGrade] = useState("");
   const [teacher, setTeacher] = useState("");
   const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
+  const [subject, setSubject] = useState("");
+  const [weekDay, setWeekDay] = useState("");
+  const [calId, setCalId] = useState("");
 
-  const handleSubmit = (evt) => {
-    evt.preventDefault();
-    alert(`Submitting Name ${(grade, teacher, startTime)}`);
+  var lesson = {
+    summary: `${grade}`,
+    description: `${teacher}`,
+    start: {
+      dateTime: `${weekDay + startTime}`,
+      timeZone: "Africa/Nairobi",
+    },
+    end: {
+      dateTime: `${weekDay + endTime}`,
+      timeZone: "Africa/Nairobi",
+    },
+    recurrence: ["RRULE:FREQ=WEEKLY;COUNT=52"],
+    reminders: {
+      useDefault: true,
+    },
+    extendedProperties: {
+      shared: {
+        subject: `${subject}`,
+      },
+    },
   };
+
+  useEffect(() => {
+    loadCalender();
+  });
+
+  const loadCalender = useApi().loadingCalender;
+
+  loadCalender().then(function (result) {
+    setCalId(result);
+  });
+
+  const HandleSubmit = (evt) => {
+    evt.preventDefault();
+    createEvent(lesson);
+  };
+
+  const updateEvents = useApi().getEvents;
+
+  const createEvent = async (lesson) => {
+    console.log(lesson);
+    await window.gapi.client.calendar.events.insert({
+      calendarId: `${calId}`,
+      resource: lesson,
+    });
+
+    updateEvents();
+  };
+
+  function getWeekDay(day) {
+    const dayOfWeek = getDayOfWeek(day);
+    const date = new Date();
+    const diff = date.getDay() - dayOfWeek;
+    if (diff >= 0) {
+      date.setDate(date.getDate() + (7 - diff));
+    } else if (diff < 0) {
+      date.setDate(date.getDate() + -1 * diff);
+    }
+    const month = date.getMonth() + 1;
+    setWeekDay(
+      date.getFullYear() + "-" + month + "-" + date.getDate()
+    );
+  }
+
+  function getTime(startTime) {
+    return startTime === "8:00 AM"
+      ? setTime("T08:00:00+03:00", "T10:00:00+03:00")
+      : startTime === "10:00 AM"
+      ? setTime("T10:00:00+03:00", "T12:00:00+03:00")
+      : startTime === "12:00 PM"
+      ? setTime("T12:00:00+03:00", "T14:00:00+03:00")
+      : null;
+  }
+
+  function setTime(startTime, endTime) {
+    setStartTime(startTime);
+    setEndTime(endTime);
+  }
 
   return (
     <>
       <Container>
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={HandleSubmit}>
           <Title>Create a New Lesson</Title>
           <FormGroup>
             <label htmlFor="grade">Select the Class:</label>
@@ -34,7 +113,7 @@ export default function AddRecord() {
             <label htmlFor="teacher">Teacher's Name:</label>
             <select
               id="teacher"
-              onChange={(e) => getWeekDay(e.target.value)}
+              onChange={(e) => setTeacher(e.target.value)}
               required
             >
               <FirstOption />
@@ -47,7 +126,7 @@ export default function AddRecord() {
             <label htmlFor="subject">Select the Subject</label>
             <select
               id="subject"
-              onChange={(e) => getWeekDay(e.target.value)}
+              onChange={(e) => setSubject(e.target.value)}
               required
             >
               <FirstOption />
@@ -78,7 +157,7 @@ export default function AddRecord() {
             <label htmlFor="time">Class Starts at:</label>
             <select
               id="time"
-              onChange={(e) => getWeekDay(e.target.value)}
+              onChange={(e) => getTime(e.target.value)}
               required
             >
               <FirstOption />
@@ -93,6 +172,24 @@ export default function AddRecord() {
     </>
   );
 }
+
+// Helper Functions
+
+function getDayOfWeek(day) {
+  return day === "Monday"
+    ? 1
+    : day === "Teusday"
+    ? 2
+    : day === "Wednesday"
+    ? 3
+    : day === "Thursday"
+    ? 4
+    : day === "Friday"
+    ? 5
+    : 1;
+}
+
+// Styles
 
 const Title = styled.h1`
   ${styles.fonts.titleFont};
@@ -127,6 +224,7 @@ const Button = styled.input`
     box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.14),
       0 1px 18px 0 rgba(0, 0, 0, 0.12), 0 3px 5px -1px rgba(0, 0, 0, 0.2);
   }
+  outline: none !important;
 `;
 
 const FormGroup = styled.div`
@@ -187,33 +285,3 @@ const Container = styled.div`
     transform: scale(1);
   }
 `;
-
-// Helper Functions
-function getDayOfWeek(day) {
-  return day === "Monday"
-    ? 1
-    : day === "Teusday"
-    ? 2
-    : day === "Wednesday"
-    ? 3
-    : day === "Thursday"
-    ? 4
-    : day === "Friday"
-    ? 5
-    : 1;
-}
-function getWeekDay(day) {
-  var dayOfWeek = getDayOfWeek(day);
-  var date = new Date();
-  var diff = date.getDay() - dayOfWeek;
-  if (diff > 0) {
-    date.setDate(date.getDate() + (7 - diff));
-  } else if (diff < 0) {
-    date.setDate(date.getDate() + -1 * diff);
-  }
-  console.log(
-    date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate(),
-    date.toISOString()
-  );
-  return date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate();
-}
