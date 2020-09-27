@@ -2,8 +2,7 @@ This project was created as an interview assessment for [Savannah Informatics](h
 
 ## Documentation
 
-This documentation will provide an overview into the project, how things run and the decisions made at each step.
-
+This documentation will provide an overview into the project, how things run and the decisions made at each step. The documentation gives the general functionality of each function in the components skipping the Layout & JSX plus the Styling which is done in Styled Components.
 
 ##### What the app does;
 The app is suppoed to help teachers schedule lessons and prepare the timetable
@@ -23,7 +22,7 @@ The app uses styled-components and styled icons which are not discussed in this 
 2. [The Google Calender API](#the-google-api)
 3. The code
 	1. [App.js](#app.js)
-	2. components/auth.jsx
+	2. [components/auth.jsx](#auth.jsx)
 	3. components/context.jsx
 	4. components/timetable.jsx
 	5. components/addRecord.jsx
@@ -93,8 +92,19 @@ This Component is responsible for the render, but its otherwise pretty dumb,
         return <LoadingCalender />;
     }
   }
-  ```
+```
 The app will ensure that if the person is not signed in then the view is set to the login page, otherwise show either the add lesson page or the timetable.
+
+## Auth.jsx
+
+This component provide the general functionality for the login page, it includes the layout in JSX its styling & a call to `Context` to a login function. Which happens like so
+```
+const handleLogin = useApi().signIn;
+```
+The function is called by
+```
+<Button onClick={handleLogin}>
+```
 
 # Some Functions I am proud of...
 
@@ -137,8 +147,8 @@ The function takes in time `(2015-05-28T09:00:00-07:00)` as its arguement, evalu
     'dateTime': '2015-05-28T09:00:00-07:00',
     'timeZone': 'America/Los_Angeles'
   },
-  ```
-  as the input so we need a way to convert `Monday` to the next occuring Monday then set the event to recur weekly
+```
+as the input so we need a way to convert `Monday` to the next occuring Monday then set the event to recur weekly
   
  ##### The solution
  
@@ -171,5 +181,5 @@ The function takes in time `(2015-05-28T09:00:00-07:00)` as its arguement, evalu
     ? 5
     : 1;
 }
-  ```
-The function takes in day say `Monday` calls the `getDayOfWeek` function which returns the weekday as a number then minus that from todays date then evaluate that to find the next occuring Monday, then get its `year, month and date` in that format which we'll then append to the time the user entered for the class. **ProTip** you need to add one to the month value since Javascript starts counting from zero, meaning `Jan = 0, Feb = 1... Dec = 11`
+```
+The function takes in day say `Monday` calls the `getDayOfWeek` function which returns the weekday as a number then minus that from todays date then evaluate that to find the next occuring Monday, then get its `year, month and date` in that format which we'll then append to the time the user entered for the class. **ProTip** you need to add one to the month value since Javascript starts counting from zero, meaning `Jan = 0, Feb = 1... Dec = 11` 
