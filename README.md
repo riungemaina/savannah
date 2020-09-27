@@ -1,4 +1,4 @@
-This project was created as an interview assesment for [Savannah Informatics](http://savannahinformatics.com/).
+This project was created as an interview assessment for [Savannah Informatics](http://savannahinformatics.com/).
 
 ## Documentation
 
