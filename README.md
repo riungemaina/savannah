@@ -31,12 +31,12 @@ Delightfully the app uses ReactJS
 
 ## The Files & Components
 
-- **App.js** - handles the render logic
+- **App.js** - handles the render logic by getting the page state from Context then showing the required page
 - **components/utilities.js** - stores utilities such as the global styles (fonts, media queries) and the links
-- **components/auth.jsx** - login page, handles Login logic
+- **components/auth.jsx** - login page, handles Login logic by triggering a login fuction in Context
 - **components/context.jsx** - the brains of the app, handles most of the global state & the general functions that update these states
 - **components/nav.jsx** - the navbar, toggles pages & provides logout
-- **components/timetable.jsx** - shows the timetable
+- **components/timetable.jsx** - gets the events from context & displays them as the timetable
 - **components/addRecord.jsx** - stand alone-ish component that adds lessons to the calender API, creates the Google events itself rather than using Context.
 - **components/alert.jsx** - provides the general alerts, messages and notifications to the user following their actions
 
