@@ -36,7 +36,7 @@ const Wrapper = styled.div`
   padding: 40px 30px;
   text-align: center;
   box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.24);
-  background: #ddf;
+  background: #ddddff;
   border-radius: 2px;
 
   ${styles.deviceSize.mobile} {
@@ -72,6 +72,7 @@ const Button = styled.button`
   padding: 8px;
   gap: 20px;
   letter-spacing: 2px;
+  outline: none;
 
   &:hover {
     cursor: pointer;
