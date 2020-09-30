@@ -25,7 +25,7 @@ The app uses styled-components and styled icons which are not discussed in this 
 2. [The Google Calender API](#the-google-api)
 3. The code
    1. [App.js](#app.js)
-   2. [components/auth.jsx](#auth.jsx)
+   2. [components/auth.jsx](./documentation/auth.md)
    3. [components/context.jsx]
    4. components/timetable.jsx
    5. components/addRecord.jsx
@@ -78,7 +78,7 @@ The function loads GAPI then calls `startGapi` which will tell Context that GAPI
 
 ###### What the api returns
 
-```JSON
+```
   'start': {
     'dateTime': '2015-05-28T09:00:00-07:00',
     'timeZone': 'America/Los_Angeles'
@@ -87,7 +87,7 @@ The function loads GAPI then calls `startGapi` which will tell Context that GAPI
 
 ###### What we want
 
-```JSON
+```
 Day - Monday
 Time - 8:00 AM - 10:00 AM
 ```
