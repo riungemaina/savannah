@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { styles } from "./utilities";
 import { useApi } from "./context";
+import { CreatingLesson, LessonCreated, Error } from "./alert";
 
 export default function AddRecord() {
   const [grade, setGrade] = useState("");
@@ -11,6 +12,7 @@ export default function AddRecord() {
   const [subject, setSubject] = useState("");
   const [weekDay, setWeekDay] = useState("");
   const [calId, setCalId] = useState("");
+  const [alertMsg, setAlertMsg] = useState("");
 
   var lesson = {
     summary: `${grade}`,
@@ -36,7 +38,7 @@ export default function AddRecord() {
 
   useEffect(() => {
     loadCalender();
-  });
+  }, []);
 
   const loadCalender = useApi().loadingCalender;
 
@@ -47,18 +49,25 @@ export default function AddRecord() {
   const HandleSubmit = (evt) => {
     evt.preventDefault();
     createEvent(lesson);
+    evt.target.reset();
   };
 
-  const updateEvents = useApi().getEvents;
-
   const createEvent = async (lesson) => {
-    console.log(lesson);
-    await window.gapi.client.calendar.events.insert({
-      calendarId: `${calId}`,
-      resource: lesson,
-    });
-
-    updateEvents();
+    setAlertMsg("Creating");
+    try {
+      await window.gapi.client.calendar.events
+        .insert({
+          calendarId: `${calId}`,
+          resource: lesson,
+        })
+        .then(function (result) {
+          if (result.status === 200) {
+            setAlertMsg("Created");
+          }
+        });
+    } catch (err) {
+      setAlertMsg("Error");
+    }
   };
 
   function getWeekDay(day) {
@@ -71,9 +80,7 @@ export default function AddRecord() {
       date.setDate(date.getDate() + -1 * diff);
     }
     const month = date.getMonth() + 1;
-    setWeekDay(
-      date.getFullYear() + "-" + month + "-" + date.getDate()
-    );
+    setWeekDay(date.getFullYear() + "-" + month + "-" + date.getDate());
   }
 
   function getTime(startTime) {
@@ -91,8 +98,28 @@ export default function AddRecord() {
     setEndTime(endTime);
   }
 
+  function Alert() {
+    switch (alertMsg) {
+      case "Creating":
+        return <CreatingLesson />;
+      case "Created":
+        setTimeout(ClearAlert, 6000);
+        return <LessonCreated />;
+      case "Error":
+        setTimeout(ClearAlert, 6000);
+        return <Error />;
+      default:
+        return "";
+    }
+  }
+
+  function ClearAlert() {
+    setAlertMsg("");
+  }
+
   return (
     <>
+      <Alert />
       <Container>
         <Form onSubmit={HandleSubmit}>
           <Title>Create a New Lesson</Title>
@@ -117,7 +144,7 @@ export default function AddRecord() {
               required
             >
               <FirstOption />
-              <option>Mr Ballack</option>
+              <option>Mr John</option>
               <option>Mrs Ruth</option>
               <option>Ms Alice</option>
             </select>
@@ -132,7 +159,7 @@ export default function AddRecord() {
               <FirstOption />
               <option>Mathematics</option>
               <option>English</option>
-              <option>Kiswahi</option>
+              <option>Kiswahili</option>
               <option>Science</option>
               <option>Social Studies</option>
               <option>CRE</option>
@@ -147,7 +174,7 @@ export default function AddRecord() {
             >
               <FirstOption />
               <option>Monday</option>
-              <option>Teusday</option>
+              <option>Tuesday</option>
               <option>Wednesday</option>
               <option>Thursday</option>
               <option>Friday</option>
@@ -163,7 +190,7 @@ export default function AddRecord() {
               <FirstOption />
               <option>8:00 AM</option>
               <option>10:00 AM</option>
-              <option>12: 00 PM</option>
+              <option>12:00 PM</option>
             </select>
           </FormGroup>
           <Button type="submit" value="Create Lesson" />
@@ -178,7 +205,7 @@ export default function AddRecord() {
 function getDayOfWeek(day) {
   return day === "Monday"
     ? 1
-    : day === "Teusday"
+    : day === "Tuesday"
     ? 2
     : day === "Wednesday"
     ? 3
@@ -253,10 +280,19 @@ const FormGroup = styled.div`
     display: block;
   }
 `;
+const SlideUp = keyframes`
+  from {
+    margin-top: 30px;
+  }
+  to {
+    margin-top: 0;
+  }
+`;
 
 const Form = styled.form`
   ${styles.fonts.bodyFont};
   padding: 10px;
+  animation: ${SlideUp} 0.3s linear;
 `;
 
 const Container = styled.div`
