@@ -5,38 +5,40 @@ This project was created as an interview assessment for [Savannah Informatics](h
 This documentation will provide an overview into the project, how things run and the decisions made at each step. The documentation gives the general functionality of each function in the components skipping the Layout & JSX plus the Styling which is done in Styled Components.
 
 ##### What the app does;
-The app is suppoed to help teachers schedule lessons and prepare the timetable
 
-##### My Implementation;
+The app is supposed to help teachers schedule lessons and prepare the timetable
+
+##### My Implementation
+
 On Launching the app, you go to a login page (if you are not logged in already), the app logs you in via Google, asking for the permission to your calendar...
 The app then looks for the Timetable calendar and creates it if it does not exist, if it exists it is opened and the user is taken to a second page which displays the timetable.
 From there the user can then toggle between viewing the timetable and creating new lessons.
 Delightfully the app uses ReactJS
 
-##### Dependancies;
+##### Dependencies
+
 The app uses styled-components and styled icons which are not discussed in this documentation, styled icons are pretty easy to implement and styled-components are just regular CSS or SCSS.
 
 ## Contents
 
-1.  [The Files & Components](#the-files-&-components)
+1. [The Files & Components](#the-files-&-components)
 2. [The Google Calender API](#the-google-api)
 3. The code
-	1. [App.js](#app.js)
-	2. [components/auth.jsx](#auth.jsx)
-	3. components/context.jsx
-	4. components/timetable.jsx
-	5. components/addRecord.jsx
-	6. components/nav.jsx
-	7. components/utilities.js
-	8. components/alert.jsx
+   1. [App.js](#app.js)
+   2. [components/auth.jsx](#auth.jsx)
+   3. [components/context.jsx]
+   4. components/timetable.jsx
+   5. components/addRecord.jsx
+   6. components/nav.jsx
+   7. components/utilities.js
+   8. components/alert.jsx
 4. [Some Functions I'm proud of]()
-
 
 ## The Files & Components
 
 - **App.js** - handles the render logic by getting the page state from Context then showing the required page
 - **components/utilities.js** - stores utilities such as the global styles (fonts, media queries) and the links
-- **components/auth.jsx** - login page, handles Login logic by triggering a login fuction in Context
+- **components/auth.jsx** - login page, handles Login logic by triggering a login function in Context
 - **components/context.jsx** - the brains of the app, handles most of the global state & the general functions that update these states
 - **components/nav.jsx** - the navbar, toggles pages & provides logout
 - **components/timetable.jsx** - gets the events from context & displays them as the timetable
@@ -45,85 +47,54 @@ The app uses styled-components and styled icons which are not discussed in this 
 
 ## The Google Api
 
-The Google Api was by far the most challenging part of this assessment. They have very shallow documentation with a very small community. Its hard to get started but once I got it runnining, it run like a new v8.
+The Google Api was by far the most challenging part of this assessment. They have very shallow documentation with a very small community. Its hard to get started but once I got it running, it run like a new v8.
 The code is initialized in `public/index.html` like so;
- ```
- window.gapiLoaded = function () {
-      startGapi()
-    };
-    (function (d, s, id) {
-      var js,
-        p = d.getElementsByTagName(s)[0];
-      if (d.getElementById(id)) {
-        return;
-      }
-      js = d.createElement(s);
-      js.id = id;
-      js.src =
-        'https://apis.google.com/js/platform.js?onload=gapiLoaded';
-      p.parentNode.insertBefore(js, p);
-    })(document, 'script', 'google-api-js');
+
+```JavaScript
+window.gapiLoaded = function () {
+     startGapi()
+   };
+   (function (d, s, id) {
+     var js,
+       p = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {
+       return;
+     }
+     js = d.createElement(s);
+     js.id = id;
+     js.src =
+       'https://apis.google.com/js/platform.js?onload=gapiLoaded';
+     p.parentNode.insertBefore(js, p);
+   })(document, 'script', 'google-api-js');
 ```
+
 The function loads GAPI then calls `startGapi` which will tell Context that GAPI is ready which inturn makes sure that everything starts after GAPI is ready.
 
-## App.js
+# Some Functions I am proud of
 
-This Component is responsible for the render, but its otherwise pretty dumb,
-```
-  function ShowPage() {
-    if (isSignedIn) {
-      return (
-        <>
-          <Nav />
-          <ShowView />
-        </>
-      );
-    }
-    return <Auth />;
-  }
+## 1
 
-  function ShowView() {
-    switch (pageView) {
-      case "Create New Lesson":
-        return <Timetable />;
-      case "Show Timetable":
-        return <AddRecord />;
-      default:
-        return <LoadingCalender />;
-    }
-  }
-```
-The app will ensure that if the person is not signed in then the view is set to the login page, otherwise show either the add lesson page or the timetable.
-
-## Auth.jsx
-
-This component provide the general functionality for the login page, it includes the layout in JSX its styling & a call to `Context` to a login function. Which happens like so
-```
-const handleLogin = useApi().signIn;
-```
-The function is called by
-```
-<Button onClick={handleLogin}>
-```
-
-# Some Functions I am proud of...
-
-## 1.
 **Problem** The Google API returns events in UTC but I need the time in UTC-3, The time returned is also a Date which is not very helpful since this is a calender, we need the weekday [Mon-Fri] and the time the class starts.
+
 ###### What the api returns
-  ```
+
+```JSON
   'start': {
     'dateTime': '2015-05-28T09:00:00-07:00',
     'timeZone': 'America/Los_Angeles'
   },
 ```
+
 ###### What we want
-```
+
+```JSON
 Day - Monday
 Time - 8:00 AM - 10:00 AM
 ```
+
 ###### The Solution
-```
+
+```JavaScript
   function classTime(time) {
     // the time returned by google is in UTC(0-z)
     // so we -3 to get the time in Africa/Nairobi
@@ -137,49 +108,53 @@ Time - 8:00 AM - 10:00 AM
     }
   }
 ```
-The function takes in time `(2015-05-28T09:00:00-07:00)` as its arguement, evaluates the time using a regex then return the start and end time of the lesson;
 
-## 2.
+The function takes in time `(2015-05-28T09:00:00-07:00)` as its argument, evaluates the time using a regex then return the start and end time of the lesson;
 
-**Problem** we need the user to input the Date of the Lesson but since its a timetable then we want it to be as simple as just entering `Monday` then we tell Google that that event should recur every Monday for a year,  Google will only accept
-```
+## 2
+
+**Problem** we need the user to input the Date of the Lesson but since its a timetable then we want it to be as simple as just entering `Monday` then we tell Google that that event should recur every Monday for a year, Google will only accept
+
+```JavaScript
   'start': {
     'dateTime': '2015-05-28T09:00:00-07:00',
     'timeZone': 'America/Los_Angeles'
   },
 ```
-as the input so we need a way to convert `Monday` to the next occuring Monday then set the event to recur weekly
-  
- ##### The solution
- 
- ```
-  function getWeekDay(day) {
-    const dayOfWeek = getDayOfWeek(day);
-    const date = new Date();
-    const diff = date.getDay() - dayOfWeek;
-    if (diff >= 0) {
-      date.setDate(date.getDate() + (7 - diff));
-    } else if (diff < 0) {
-      date.setDate(date.getDate() + -1 * diff);
-    }
-    const month = date.getMonth() + 1;
-    setWeekDay(
-      date.getFullYear() + "-" + month + "-" + date.getDate()
-    );
-  }
-  
-  function getDayOfWeek(day) {
-  return day === "Monday"
-    ? 1
-    : day === "Teusday"
-    ? 2
-    : day === "Wednesday"
-    ? 3
-    : day === "Thursday"
-    ? 4
-    : day === "Friday"
-    ? 5
-    : 1;
+
+as the input so we need a way to convert `Monday` to the next occurring Monday then set the event to recur weekly
+
+##### The solution
+
+```JavaScript
+ function getWeekDay(day) {
+   const dayOfWeek = getDayOfWeek(day);
+   const date = new Date();
+   const diff = date.getDay() - dayOfWeek;
+   if (diff >= 0) {
+     date.setDate(date.getDate() + (7 - diff));
+   } else if (diff < 0) {
+     date.setDate(date.getDate() + -1 * diff);
+   }
+   const month = date.getMonth() + 1;
+   setWeekDay(
+     date.getFullYear() + "-" + month + "-" + date.getDate()
+   );
+ }
+
+ function getDayOfWeek(day) {
+ return day === "Monday"
+   ? 1
+   : day === "Tuesday"
+   ? 2
+   : day === "Wednesday"
+   ? 3
+   : day === "Thursday"
+   ? 4
+   : day === "Friday"
+   ? 5
+   : 1;
 }
 ```
-The function takes in day say `Monday` calls the `getDayOfWeek` function which returns the weekday as a number then minus that from todays date then evaluate that to find the next occuring Monday, then get its `year, month and date` in that format which we'll then append to the time the user entered for the class. **ProTip** you need to add one to the month value since Javascript starts counting from zero, meaning `Jan = 0, Feb = 1... Dec = 11` 
+
+The function takes in day say `Monday` calls the `getDayOfWeek` function which returns the weekday as a number then minus that from todays date then evaluate that to find the next occurring Monday, then get its `year, month and date` in that format which we'll then append to the time the user entered for the class. **ProTip** you need to add one to the month value since Javascript starts counting from zero, meaning `Jan = 0, Feb = 1... Dec = 11`
