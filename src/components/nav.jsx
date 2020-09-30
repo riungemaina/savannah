@@ -38,12 +38,15 @@ const ToggleButton = styled.button`
   letter-spacing: 2px;
   float: right;
   padding: 5px 20px;
-  margin 0 10px;
+  margin: 5px;
   outline: none;
+  
 
   &:hover {
     cursor: pointer;
     background: #ddd;
+    box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.14),
+      0 1px 18px 0 rgba(0, 0, 0, 0.12), 0 3px 5px -1px rgba(0, 0, 0, 0.2);
   }
 `;
 
@@ -70,12 +73,14 @@ const Button = styled.button`
   letter-spacing: 2px;
   float: right;
   padding: 5px 20px;
-  margin 0 10px;
+  margin: 5px;
   outline: none;
 
   &:hover {
     cursor: pointer;
     background: #c02006;
+    box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.14),
+      0 1px 18px 0 rgba(0, 0, 0, 0.12), 0 3px 5px -1px rgba(0, 0, 0, 0.2);
   }
 `;
 
@@ -85,6 +90,5 @@ const Wrapper = styled.nav`
   justify-content: space-around;
   width: 100%;
   box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.24);
-  height: 50px;
-  background-color: indigo;
+  background-color: #4b0082;
 `;
