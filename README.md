@@ -26,13 +26,13 @@ The app uses styled-components and styled icons which are not discussed in this 
 3. The code
    1. [App.js](#app.js)
    2. [components/auth.jsx](./documentation/auth.md)
-   3. [components/context.jsx]
-   4. components/timetable.jsx
-   5. components/addRecord.jsx
-   6. components/nav.jsx
-   7. components/utilities.js
-   8. components/alert.jsx
-4. [Some Functions I'm proud of]()
+   3. [components/context.jsx](./documentation/context.md)
+   4. [components/timetable.jsx](./documentation/timetable.md)
+   5. [components/addRecord.jsx](./documentation/addRecord.md)
+   6. [components/nav.jsx](./documentation/nav.md)
+   7. [components/utilities.js](./documentation/utilities.md)
+   8. [components/alert.jsx](./documentation/alert.md)
+4. [Some Functions I'm proud of](#some-functions-i-am-proud-of)
 
 ## The Files & Components
 
