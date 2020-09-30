@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { styles } from "./utilities";
 import { useApi } from "./context";
-
+import { LoadingTimetable, TimetableEmpty } from "./alert";
 
 export default function LoadingCalender() {
   const [lesson, setLesson] = useState(null);
@@ -42,55 +42,91 @@ export default function LoadingCalender() {
       : "hmm🤔, seems to have an error";
   }
 
-  function ShowLessons() {
+  function ShowView() {
     if (lesson !== null) {
-      return (
-        <>
+      if (lesson.length === 0) {
+        return <TimetableEmpty />;
+      }
+      return <ShowLessons />;
+    }
+    return <LoadingTimetable />;
+  }
+
+  function ShowLessons() {
+    return (
+      <>
+        <Page>
           {lesson.map((lesson) => (
             <div key={lesson.id}>
-              <Wrapper>
+              <Wrapper color={lesson.summary}>
                 <Title>{lesson.summary}</Title>
                 <Teacher>Teacher - {lesson.description}</Teacher>
                 <Subject>
                   Subject - {lesson.extendedProperties.shared.subject}
                 </Subject>
                 <Weekday>Day - {weekDay(lesson.start.dateTime)}</Weekday>
-                <Time>Time - {classTime(lesson.start.dateTime)}</Time>
+                <Time>{classTime(lesson.start.dateTime)}</Time>
               </Wrapper>
             </div>
           ))}
-        </>
-      );
-    }
-    return <p>loading</p>;
+          <div style={{ width: "230px", height: "0" }}></div>
+          <div style={{ width: "230px", height: "0" }}></div>
+          <div style={{ width: "230px", height: "0" }}></div>
+        </Page>
+      </>
+    );
   }
-
-  console.log(lesson);
 
   return (
     <>
-      {/* <Alert /> */}
-
-      <ShowLessons />
+      <ShowView />
     </>
   );
 }
+const handleBgColor = (color) => {
+  switch (color) {
+    case "Class 1":
+      return "#008eff";
+    case "Class 2":
+      return "#e91e63";
+    case "Class 3":
+      return "#ff9800";
+    default:
+      return "#fff";
+  }
+};
+
+const Page = styled.div`
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  background: rgb(221 221 255 / 0.95);
+  padding: 3%;
+  padding-top: 3%;
+  max-width: 1024px;
+  margin: 0 Auto;
+  border-left: #fff solid 2px;
+  border-right: #fff solid 2px;
+`;
+
 const Wrapper = styled.div`
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
   letter-spacing: 2px;
-  max-width: 20%;
+  width: 230px;
   margin: 2%;
   border: 1px solid #008eff;
-  background-color: #008eff;
+  border-radius: 3px;
+  background-color: ${({ color }) => handleBgColor(color)};
   transition: background-color 0.28s ease, box-shadow 0.28s ease;
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2),
     0 1px 5px 0 rgba(0, 0, 0, 0.12);
 
   &:hover {
-    background: #fff;
     box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.14),
       0 1px 18px 0 rgba(0, 0, 0, 0.12), 0 3px 5px -1px rgba(0, 0, 0, 0.2);
   }
-  &:hover h2 { color: #000; border-bottom: 1px solid #008eff;}
 
   p{
     padding 10px; 
@@ -98,14 +134,6 @@ const Wrapper = styled.div`
       ${styles.fonts.bodyFont};
   }
 
-    ${styles.deviceSize.mobile} {
-    max-width: 95%;
-    margin: 5%;
-  }
-    ${styles.deviceSize.tablet} {
-    max-width: 40%;
-    margin: 5%;
-  }
 `;
 const Title = styled.h2`
   padding: 0.5em;
