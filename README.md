@@ -27,7 +27,7 @@ The app uses styled-components and styled icons which are not discussed in this 
    1. [App.js](#app.js)
    2. [components/auth.jsx](./documentation/auth.md)
    3. [components/context.jsx](./documentation/context.md)
-   4. [components/timetable.jsx](./documentation/timetable.md)
+   4. [components/timetable.jsx](./documentation)
    5. [components/addRecord.jsx](./documentation/addRecord.md)
    6. [components/nav.jsx](./documentation/nav.md)
    7. [components/utilities.js](./documentation/utilities.md)
